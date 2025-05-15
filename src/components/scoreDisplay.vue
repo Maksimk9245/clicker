@@ -1,34 +1,56 @@
-<script setup>
-import { ref } from 'vue'
-const score = ref(
-    JSON.parse(localStorage.getItem('score')) || 0
-)
-const showPlusList=ref([])
+<script setup lang="ts">
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
-function handleClick(event) {
-  score.value++
-  localStorage.setItem('score', JSON.stringify(score.value))
-  console.log('Сохранили:', score.value)
+// Переменные
+const score = ref<number>(JSON.parse(localStorage.getItem('score') || '0'));
+const boostMultiplier = ref<number>(1);
+const showPlusList = ref<{ id: number; x: number; y: number }[]>([]);
+let intervalId: ReturnType<typeof setInterval> | undefined = undefined;
+//TODO добавить += 1 к кнопке буст
+// Обработка клика
+function handleClick(event: MouseEvent) {
+  score.value += boostMultiplier.value;
+  localStorage.setItem('score', JSON.stringify(score.value));
+  console.log('Сохранили:', score.value);
 
-  const {clientX, clientY} = event
-  const containerRect = event.currentTarget.getBoundingClientRect();
-
+  const { clientX, clientY } = event;
+  const containerRect = (event.currentTarget as HTMLElement).getBoundingClientRect();
 
   showPlusList.value.push({
     id: Date.now(),
-    x: clientX -containerRect.left,
-    y: clientY -containerRect.top,
-  })
+    x: clientX - containerRect.left,
+    y: clientY - containerRect.top,
+  });
+
   setTimeout(() => {
-    showPlusList.value.shift()
-  }, 1000)
+    showPlusList.value.shift();
+  }, 1000);
 }
+
+// Автоматическое увеличение очков
+function increaseScoreAutomatically() {
+  if (intervalId) clearInterval(intervalId);
+
+  intervalId = setInterval(() => {
+    score.value += boostMultiplier.value=1;
+    localStorage.setItem('score', JSON.stringify(score.value));
+    console.log('Автоматически увеличено:', score.value);
+  }, 8000);
+}
+
+onMounted(() => {
+  increaseScoreAutomatically();
+});
+
+onBeforeUnmount(() => {
+  if (intervalId) clearInterval(intervalId);
+});
 </script>
 
 <template>
   <div class="container">
     <div class="score-display">
-      <p>Очки: {{ score }}</p>
+      <p>{{ score }}</p>
     </div>
     <div class="circle">
       <button class="button" @click="handleClick">
@@ -37,7 +59,8 @@ function handleClick(event) {
             class="hamster"
             alt="hamster"
             draggable="false"
-        /><span style="visibility: hidden;"></span>
+        />
+        <span style="visibility: hidden;"></span>
       </button>
       <div
           v-for="item in showPlusList"
@@ -48,6 +71,7 @@ function handleClick(event) {
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .container {
@@ -111,6 +135,7 @@ function handleClick(event) {
   color: lightgrey;
   margin-bottom: 10px;
   text-align: center;
+  user-select: none;
 }
 .plus-one {
   position: absolute;
