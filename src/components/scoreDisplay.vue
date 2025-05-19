@@ -1,26 +1,29 @@
 <script setup>
 import { ref } from 'vue'
-const score = ref(
-    JSON.parse(localStorage.getItem('score')) || 0
-)
-const showPlusList=ref([])
+
+const savedScore = localStorage.getItem('score')
+const score = ref(Number.isFinite(+savedScore) ? +savedScore : 0)
+
+const showPlusList = ref([])
 
 function handleClick(event) {
   score.value++
   localStorage.setItem('score', JSON.stringify(score.value))
   console.log('Сохранили:', score.value)
 
-  const {clientX, clientY} = event
-  const containerRect = event.currentTarget.getBoundingClientRect();
+  const { clientX, clientY } = event
+  const containerRect = event.currentTarget.getBoundingClientRect()
 
+  const id = Date.now()
 
   showPlusList.value.push({
-    id: Date.now(),
-    x: clientX -containerRect.left,
-    y: clientY -containerRect.top,
+    id,
+    x: clientX - containerRect.left,
+    y: clientY - containerRect.top,
   })
+
   setTimeout(() => {
-    showPlusList.value.shift()
+    showPlusList.value = showPlusList.value.filter(item => item.id !== id)
   }, 1000)
 }
 </script>
