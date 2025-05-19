@@ -1,15 +1,34 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 
-const savedScore = localStorage.getItem('score')
-const score = ref(Number.isFinite(+savedScore) ? +savedScore : 0)
+const savedClickScore = localStorage.getItem('clickScore')
+const savedTimerScore = localStorage.getItem('timerScore')
+
+const score = ref(Number.isFinite(+savedClickScore) ? +savedClickScore : 0)
+const timerScore = ref(Number.isFinite(+savedTimerScore) ? +savedTimerScore : 0)
 
 const showPlusList = ref([])
 
+let intervalId: number | null = null
+
+onMounted(() => {
+  intervalId = setInterval(() => {
+    timerScore.value++
+    localStorage.setItem('timerScore', JSON.stringify(timerScore.value))
+    console.log('Timer score', timerScore.value)
+  }, 10000)
+})
+
+onBeforeUnmount(() => {
+  if (intervalId !== null) {
+    clearInterval(intervalId)
+  }
+})
+
 function handleClick(event: MouseEvent) {
   score.value++
-  localStorage.setItem('score', JSON.stringify(score.value))
-  console.log('Сохранили:', score.value)
+  localStorage.setItem('clickScore', JSON.stringify(score.value))
+  console.log('Клик - Сохранил: ', score.value)
 
   const { clientX, clientY } = event
   const containerRect = (event.currentTarget as HTMLElement).getBoundingClientRect()
@@ -26,13 +45,8 @@ function handleClick(event: MouseEvent) {
   }, 1000)
 }
 
-// Заглушки для power-кнопок
-function powerClick() {
-  console.log('Power clicked')
-}
-function powerOfNumClick() {
-  console.log('Power of number clicked')
-}
+
+
 </script>
 
 <template>

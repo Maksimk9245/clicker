@@ -8,5 +8,4 @@ import bufs from "./components/bufs.vue"
 </template>
 
 <style scoped>
-
 </style>
