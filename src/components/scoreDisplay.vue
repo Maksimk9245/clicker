@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 
 const savedScore = localStorage.getItem('score')
@@ -6,16 +6,15 @@ const score = ref(Number.isFinite(+savedScore) ? +savedScore : 0)
 
 const showPlusList = ref([])
 
-function handleClick(event) {
+function handleClick(event: MouseEvent) {
   score.value++
   localStorage.setItem('score', JSON.stringify(score.value))
   console.log('Сохранили:', score.value)
 
   const { clientX, clientY } = event
-  const containerRect = event.currentTarget.getBoundingClientRect()
+  const containerRect = (event.currentTarget as HTMLElement).getBoundingClientRect()
 
   const id = Date.now()
-
   showPlusList.value.push({
     id,
     x: clientX - containerRect.left,
@@ -25,6 +24,14 @@ function handleClick(event) {
   setTimeout(() => {
     showPlusList.value = showPlusList.value.filter(item => item.id !== id)
   }, 1000)
+}
+
+// Заглушки для power-кнопок
+function powerClick() {
+  console.log('Power clicked')
+}
+function powerOfNumClick() {
+  console.log('Power of number clicked')
 }
 </script>
 
@@ -40,15 +47,20 @@ function handleClick(event) {
             class="hamster"
             alt="hamster"
             draggable="false"
-        /><span style="visibility: hidden;"></span>
+        />
+        <span style="visibility: hidden;"></span>
       </button>
       <div
           v-for="item in showPlusList"
           :key="item.id"
           class="plus-one"
-          :style="{ top: item.y + 'px', left: item.x + 'px' }">+1
+          :style="{ top: item.y + 'px', left: item.x + 'px' }"
+      >
+        +1
       </div>
     </div>
+
+
   </div>
 </template>
 
@@ -114,6 +126,7 @@ function handleClick(event) {
   color: lightgrey;
   margin-bottom: 10px;
   text-align: center;
+  user-select: none;
 }
 .plus-one {
   position: absolute;
