@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { isBoostActive } from 'src/boostStore'
+import { boostActive } from '@/boostStore'
 
 const savedClickScore = localStorage.getItem('clickScore')
 const savedTimerScore = localStorage.getItem('timerScore')
@@ -27,7 +27,7 @@ onBeforeUnmount(() => {
 })
 
 function handleClick(event: MouseEvent) {
-  const point = isBoostActive.value ? 10 : 1 // ✅ теперь работает правильно
+  const point = boostActive.value ? 10 : 1
   score.value += point
   localStorage.setItem('clickScore', JSON.stringify(score.value))
   console.log('Клик - Сохранил: ', score.value)
