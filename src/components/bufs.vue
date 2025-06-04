@@ -7,13 +7,17 @@ const score=ref(0)
 const showLine = ref(false)
 const showLines=ref(false)
 
-const isActive = ref(false)
-const isCooldown = ref(false)
+const isActiveCount=ref(false)
+const isCooldownCount=ref(false)
+
+const isActivePower=ref(false)
+const isCooldownPower=ref(false)
+
 
 
 function clickHandler() {
-  if (isCooldown.value||isActive.value) return;
-  isActive.value = false
+  if (isCooldownCount.value||isActiveCount.value) return;
+  isActiveCount.value = false
   activateBoost()
   console.log('Boost power, main btn')
   score.value += showLine.value ? 10:1
@@ -22,23 +26,32 @@ function clickHandler() {
   showLine.value = true
 
   setTimeout(() => {
-    isActive.value = false
+    isActiveCount.value = false
     showLine.value = false;
 
 
-    isCooldown.value =true
+    isCooldownCount.value =true
     setTimeout(() => {
-    isCooldown.value = false
+    isCooldownCount.value = false
   },10000)
   }, 5000)
 }
 function clickHaandler() {
+  if(isCooldownPower.value||isActivePower.value) return;
+  isActivePower.value = false
   console.log('Boost cout, main btn')
   showLines.value=false
   void showLines.value
   showLines.value = true
+
   setTimeout(() => {
+    isActivePower.value = false
     showLines.value = false;
+
+    isCooldownPower.value =true
+    setTimeout(() => {
+      isCooldownPower.value = false
+    }, 10000)
   }, 5000);
 }
 
@@ -51,20 +64,24 @@ function clickHaandler() {
   <div v-if="showLines" class="top-lines"></div>
   <div class="button-container">
     <div class="btn-with-line">
-      <div class="status-text" v-if="isCooldown || isActive">
-        {{ isActive ? 'Активно...' : 'Кулдаун...' }}
+      <div class="status-text" v-if="isCooldownCount || isActiveCount">
+        {{ isActiveCount ? 'Активно...' : 'Кулдаун...' }}
       </div>
 
-      <button :disabled="isActive || isCooldown" class="power" @click="clickHandler">
+      <button :disabled="isActiveCount || isCooldownCount" class="power" @click="clickHandler">
         <img src="@/assets/boost.png" alt="Boost Power" class="icon" />
       </button>
 
       <div v-if="showLine" class="line"></div>
     </div>
-
-    <button class="power-of-num" @click="clickHaandler">
-      <img src="@/assets/boostspeed.png" alt="Boost Count" class="icon"/>
-    </button>
+    <div class="btn-with-line2">
+      <div class="status-text2" v-if="isCooldownPower||isActivePower">
+          {{ isActivePower? 'Active...': 'Кулдаун...'}}
+      </div>
+      <button :disabled="isActivePower||isCooldownPower" class="power-of-num" @click="clickHaandler">
+         <img src="@/assets/boostspeed.png" alt="Boost Count" class="icon"/>
+      </button>
+    </div>
   </div>
 </template>
 
@@ -75,8 +92,18 @@ function clickHaandler() {
   flex-direction: column;
   align-items: center;
 }
-
+.btn-with-line2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .status-text {
+  font-size: 12px;
+  color: #fff;
+  margin-bottom: 4px;
+  height: 16px;
+}
+.status-text2 {
   font-size: 12px;
   color: #fff;
   margin-bottom: 4px;
