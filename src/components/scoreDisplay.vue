@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { isBoostActive } from 'src/boostStore'
 
 const savedClickScore = localStorage.getItem('clickScore')
 const savedTimerScore = localStorage.getItem('timerScore')
@@ -26,7 +27,8 @@ onBeforeUnmount(() => {
 })
 
 function handleClick(event: MouseEvent) {
-  score.value++
+  const point = isBoostActive.value ? 10 : 1 // ✅ теперь работает правильно
+  score.value += point
   localStorage.setItem('clickScore', JSON.stringify(score.value))
   console.log('Клик - Сохранил: ', score.value)
 
@@ -38,15 +40,13 @@ function handleClick(event: MouseEvent) {
     id,
     x: clientX - containerRect.left,
     y: clientY - containerRect.top,
+    text: `+${point}`,
   })
 
   setTimeout(() => {
     showPlusList.value = showPlusList.value.filter(item => item.id !== id)
   }, 1000)
 }
-
-
-
 </script>
 
 <template>
@@ -70,7 +70,7 @@ function handleClick(event: MouseEvent) {
           class="plus-one"
           :style="{ top: item.y + 'px', left: item.x + 'px' }"
       >
-        +1
+        {{item.text}}
       </div>
     </div>
 

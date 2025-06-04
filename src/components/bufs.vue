@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { activateBoost } from './src/boostStore'
+import { activateBoost } from '@/boostStore'
 
 const score=ref(0)
 
