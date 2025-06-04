@@ -1,31 +1,105 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import { activateBoost } from './src/boostStore'
+
+const score=ref(0)
+
+const showLine = ref(false)
+const showLines=ref(false)
+
 function clickHandler() {
-  console.log('Boost power')
+  activateBoost()
+  console.log('Boost power, main btn')
+  score.value += showLine.value ? 10:1
+  showLine.value = false
+  void showLine.value
+  showLine.value = true
+
+  setTimeout(() => {
+    showLine.value = false;
+  }, 5000);
 }
 function clickHaandler() {
-  console.log('Boost cout')
+  console.log('Boost cout, main btn')
+  showLines.value=false
+  void showLines.value
+  showLines.value = true
+  setTimeout(() => {
+    showLines.value = false;
+  }, 5000);
 }
+
+
 
 </script>
 
 <template>
+  <div v-if="showLine" class="first-line"></div>
+  <div v-if="showLines" class="top-lines"></div>
+
   <div class="button-container">
-    <button class="power" @click="clickHandler">
-      <img src="@/assets/boost.png" alt="Boost Power" class="icon" />
-    </button>
+    <div class="btn-with-line">
+      <button class="power" @click="clickHandler">
+        <img src="@/assets/boost.png" alt="Boost Power" class="icon" />
+      </button>
+      <div v-if="showLine" class="line"></div>
+    </div>
     <button class="power-of-num" @click="clickHaandler">
       <img src="@/assets/boostspeed.png" alt="Boost Count" class="icon"/>
     </button>
   </div>
 </template>
 
+
 <style scoped>
+.first-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 5px;
+  background-color: red;
+  z-index: 9999;
+
+
+  width: 100%;
+  animation: shrinkWidth 5s linear forwards;
+}
+
+@keyframes shrinkWidth {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0;
+  }
+}
+
+.top-lines {
+  position: fixed;
+  top: 6px;
+  left: 0;
+  height: 5px;
+  background-color: blue;
+  z-index: 9998;
+  width: 100%;
+  animation: shrinkWidth 5s linear forwards;
+  border-radius: 0 4px 4px 0;
+  box-shadow: 0 0 8px rgba(0, 0, 255, 0.4);
+
+}
+
 .button-container {
   display: flex;
   justify-content: center;
   gap: 30px;
   position: absolute;
   bottom: 20px;
+}
+
+.btn-with-line {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .power, .power-of-num {
@@ -50,8 +124,18 @@ function clickHaandler() {
   width: 40px;
   height: 40px;
 }
+
 .power:hover .icon,
 .power-of-num:hover .icon {
   transform: scale(1.2);
 }
+
+.line {
+  width: 60px;
+  height: 4px;
+  background-color: red;
+  margin-top: 6px;
+  border-radius: 2px;
+}
+
 </style>
