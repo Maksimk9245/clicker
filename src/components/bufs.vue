@@ -7,7 +7,13 @@ const score=ref(0)
 const showLine = ref(false)
 const showLines=ref(false)
 
+const isActive = ref(false)
+const isCooldown = ref(false)
+
+
 function clickHandler() {
+  if (isCooldown.value||isActive.value) return;
+  isActive.value = false
   activateBoost()
   console.log('Boost power, main btn')
   score.value += showLine.value ? 10:1
@@ -16,8 +22,15 @@ function clickHandler() {
   showLine.value = true
 
   setTimeout(() => {
+    isActive.value = false
     showLine.value = false;
-  }, 5000);
+
+
+    isCooldown.value =true
+    setTimeout(() => {
+    isCooldown.value = false
+  },10000)
+  }, 5000)
 }
 function clickHaandler() {
   console.log('Boost cout, main btn')
@@ -36,14 +49,19 @@ function clickHaandler() {
 <template>
   <div v-if="showLine" class="first-line"></div>
   <div v-if="showLines" class="top-lines"></div>
-
   <div class="button-container">
     <div class="btn-with-line">
-      <button class="power" @click="clickHandler">
+      <div class="status-text" v-if="isCooldown || isActive">
+        {{ isActive ? 'Активно...' : 'Кулдаун...' }}
+      </div>
+
+      <button :disabled="isActive || isCooldown" class="power" @click="clickHandler">
         <img src="@/assets/boost.png" alt="Boost Power" class="icon" />
       </button>
+
       <div v-if="showLine" class="line"></div>
     </div>
+
     <button class="power-of-num" @click="clickHaandler">
       <img src="@/assets/boostspeed.png" alt="Boost Count" class="icon"/>
     </button>
@@ -52,6 +70,18 @@ function clickHaandler() {
 
 
 <style scoped>
+.btn-with-line {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.status-text {
+  font-size: 12px;
+  color: #fff;
+  margin-bottom: 4px;
+  height: 16px;
+}
 .first-line {
   position: fixed;
   top: 0;
@@ -89,13 +119,15 @@ function clickHaandler() {
 }
 
 .button-container {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  position: absolute;
+  position: fixed;
   bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 30px;
+  align-items: flex-end;
+  z-index: 1000;
 }
-
 .btn-with-line {
   display: flex;
   flex-direction: column;
