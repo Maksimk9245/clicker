@@ -14,7 +14,7 @@ let intervalId: number | null = null
 
 onMounted(() => {
   intervalId = setInterval(() => {
-    timerScore.value++
+    timerScore.value+=1
     localStorage.setItem('timerScore', JSON.stringify(timerScore.value))
     console.log('Timer score', timerScore.value)
   }, 10000)
@@ -52,7 +52,7 @@ function handleClick(event: MouseEvent) {
 <template>
   <div class="container">
     <div class="score-display">
-      <p>Очки: {{ score }}</p>
+      <p>Очки: {{ timerScore }}</p>
     </div>
     <div class="circle">
       <button class="button" @click="handleClick">
