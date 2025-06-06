@@ -28,7 +28,7 @@ onBeforeUnmount(() => {
 
 function handleClick(event: MouseEvent) {
   const point = boostActive.value ? 10 : 1
-  score.value += point
+  timerScore.value += point
   localStorage.setItem('clickScore', JSON.stringify(score.value))
   console.log('Клик - Сохранил: ', score.value)
 
