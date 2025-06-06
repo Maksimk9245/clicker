@@ -13,7 +13,8 @@ const isCooldownCount=ref(false)
 const isActivePower=ref(false)
 const isCooldownPower=ref(false)
 
-
+const bonusActiveCount=ref(false)
+const bonusCooldownCount=ref(false)
 
 function clickHandler() {
   if (isCooldownCount.value||isActiveCount.value) return;
@@ -54,7 +55,22 @@ function clickHaandler() {
     }, 10000)
   }, 5000);
 }
+function clickBonus(){
+  if(bonusActiveCount.value||isActiveCount.value) return;
+  bonusActiveCount.value = false
+  score.value+=100
+  localStorage.setItem('bonusScore', JSON.stringify(score.value))
+  console.log('bonus score, activate', score.value)
 
+  setTimeout(() => {
+    bonusActiveCount.value = false;
+    bonusCooldownCount.value =true;
+
+    setTimeout(() => {
+      bonusCooldownCount.value = false
+    },1000)
+  },1000)
+}
 
 
 </script>
@@ -62,6 +78,10 @@ function clickHaandler() {
 <template>
   <div v-if="showLine" class="first-line"></div>
   <div v-if="showLines" class="top-lines"></div>
+  <button
+      :disabled="bonusActiveCount||bonusCooldownCount"
+      class="bonus1"
+      @click="clickBonus">BONUS</button>
   <div class="button-container">
     <div class="btn-with-line">
       <div class="status-text" v-if="isCooldownCount || isActiveCount">
@@ -195,6 +215,28 @@ function clickHaandler() {
   background-color: red;
   margin-top: 6px;
   border-radius: 2px;
+}
+.bonus1 {
+  position: fixed;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background-color: gold;
+  color: black;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+  transition: transform 0.3s, background-color 0.3s;
+  z-index: 1001;
+}
+
+.bonus1:hover {
+  background-color: orange;
+  transform: translateY(-50%) scale(1.05); /* сохранить позицию + анимация */
 }
 
 </style>
