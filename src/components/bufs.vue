@@ -259,7 +259,7 @@ function clickBonus(){
   right: 10px;
   transform: translateY(-50%);
   height: 10px;
-  width: 100px; /* длина полоски */
+  width: 100px;
   background-color: rgba(255, 215, 0, 0.3);
   border-radius: 3px;
   overflow: hidden;
