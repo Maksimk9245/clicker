@@ -24,12 +24,14 @@ const bonusCooldownCount=ref(false)
 function clickHandler() {
   if (isCooldownCount.value || isActiveCount.value) return;
   isActiveCount.value = true;
+  const pointsToAdd = isActiveCount.value ? 10 : 1;
+  scoreStore.add(pointsToAdd);
+
   console.log('Boost power, main btn');
 
-  scoreStore.add(showLine.value ? 10 : 1);
+  scoreStore.add(isActiveCount.value ? 10 : 1);
 
   showLine.value = false;
-  void document.body.offsetWidth;
   setTimeout(() => {
     showLine.value = true;
   }, 10);
