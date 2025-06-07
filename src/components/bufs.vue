@@ -22,48 +22,55 @@ const bonusActiveCount=ref(false)
 const bonusCooldownCount=ref(false)
 
 function clickHandler() {
-  if (isCooldownCount.value||isActiveCount.value) return;
-  isActiveCount.value = false
-  activateBoost()
-  console.log('Boost power, main btn')
-  scoreStore.increment(showLine.value ? 10:1)
-  showLine.value = false
-  void showLine.value
-  showLine.value = true
+  if (isCooldownCount.value || isActiveCount.value) return;
+  isActiveCount.value = true;
+  console.log('Boost power, main btn');
+
+  scoreStore.add(showLine.value ? 10 : 1);
+
+  showLine.value = false;
+  void document.body.offsetWidth;
+  setTimeout(() => {
+    showLine.value = true;
+  }, 10);
 
   setTimeout(() => {
-    isActiveCount.value = false
+    isActiveCount.value = false;
     showLine.value = false;
+    isCooldownCount.value = true;
 
-
-    isCooldownCount.value =true
     setTimeout(() => {
-    isCooldownCount.value = false
-  },10000)
-  }, 5000)
+      isCooldownCount.value = false;
+    }, 10000);
+  }, 5000);
 }
+
 function clickHaandler() {
-  if(isCooldownPower.value||isActivePower.value) return;
-  isActivePower.value = false
-  console.log('Boost cout, main btn')
-  showLines.value=false
-  void showLines.value
-  showLines.value = true
+  if (isCooldownPower.value || isActivePower.value) return;
+  isActivePower.value = true;
+  console.log('Boost cout, main btn');
+
+  showLines.value = false;
 
   setTimeout(() => {
-    isActivePower.value = false
-    showLines.value = false;
+    showLines.value = true;
+  }, 10);
 
-    isCooldownPower.value =true
+  setTimeout(() => {
+    isActivePower.value = false;
+    showLines.value = false;
+    isCooldownPower.value = true;
+
     setTimeout(() => {
-      isCooldownPower.value = false
-    }, 10000)
+      isCooldownPower.value = false;
+    }, 10000);
   }, 5000);
 }
 function clickBonus(){
   if(bonusActiveCount.value||isActiveCount.value) return;
-  bonusActiveCount.value = false
-  scoreStore.add+=100
+  bonusActiveCount.value = true
+  scoreStore.add(100)
+  activateBoost();
   localStorage.setItem('bonusScore', JSON.stringify(scoreStore.score))
   console.log('bonus score, activate', scoreStore.score)
 
@@ -73,7 +80,8 @@ function clickBonus(){
 
     setTimeout(() => {
       bonusCooldownCount.value = false
-    },1000)
+      console.log('bonus cooldownCount, activate', scoreStore.score)
+    },100000)
   },1000)
 }
 
@@ -87,10 +95,12 @@ function clickBonus(){
       :disabled="bonusActiveCount||bonusCooldownCount"
       class="bonus1"
       @click="clickBonus">BONUS</button>
+  <div v-if="bonusCooldownCount" class="bonus-cooldown-bar"></div>
+
   <div class="button-container">
     <div class="btn-with-line">
       <div class="status-text" v-if="isCooldownCount || isActiveCount">
-        {{ isActiveCount ? 'Активно...' : 'Кулдаун...' }}
+        {{ isActiveCount ? 'Active...': 'Кулдаун...' }}
       </div>
 
       <button :disabled="isActiveCount || isCooldownCount" class="power" @click="clickHandler">
@@ -241,7 +251,46 @@ function clickBonus(){
 
 .bonus1:hover {
   background-color: orange;
-  transform: translateY(-50%) scale(1.05); /* сохранить позицию + анимация */
+  transform: translateY(-50%) scale(1.05);
 }
+.bonus-cooldown-bar {
+  position: fixed;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  height: 10px;
+  width: 100px; /* длина полоски */
+  background-color: rgba(255, 215, 0, 0.3);
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.7);
+  z-index: 1002;
+}
+
+.bonus-cooldown-bar::before {
+  content: '';
+  display: block;
+  height: 100%;
+  background-color: green;
+  animation: shrinkWidthBonus 100s linear forwards, pulse 1s infinite ease-in-out;
+  border-radius: 3px;
+}
+
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scaleY(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
 
 </style>

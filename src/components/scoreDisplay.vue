@@ -3,18 +3,26 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { boostActive } from '@/boostStore'
 import { useScoreStore } from '@/stores'
 
+interface PlusItem {
+  id: number
+  x: number
+  y: number
+  text: string
+}
+
 const scoreStore = useScoreStore()
 
 onMounted(() => {
   scoreStore.loadFromLocalStorage()
 })
+
 const savedClickScore = localStorage.getItem('clickScore')
 const savedTimerScore = localStorage.getItem('timerScore')
 
 const score = ref(Number.isFinite(+savedClickScore) ? +savedClickScore : 0)
 const timerScore = ref(Number.isFinite(+savedTimerScore) ? +savedTimerScore : 0)
 
-const showPlusList = ref([])
+const showPlusList = ref<PlusItem[]>([])
 
 let intervalId: number | null = null
 
@@ -54,6 +62,7 @@ function handleClick(event: MouseEvent) {
   }, 1000)
 }
 </script>
+
 
 <template>
   <div class="container">
