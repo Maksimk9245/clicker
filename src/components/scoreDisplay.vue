@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { boostActive } from '@/boostStore'
+import { useScoreStore } from '@/stores'
 
+const scoreStore = useScoreStore()
+
+onMounted(() => {
+  scoreStore.loadFromLocalStorage()
+})
 const savedClickScore = localStorage.getItem('clickScore')
 const savedTimerScore = localStorage.getItem('timerScore')
 
@@ -14,9 +20,9 @@ let intervalId: number | null = null
 
 onMounted(() => {
   intervalId = setInterval(() => {
-    timerScore.value+=1
-    localStorage.setItem('timerScore', JSON.stringify(timerScore.value))
-    console.log('Timer score', timerScore.value)
+    scoreStore.add(1)
+    localStorage.setItem('timerScore', JSON.stringify(scoreStore.score))
+    console.log('Timer score', scoreStore.score)
   }, 10000)
 })
 
@@ -28,9 +34,9 @@ onBeforeUnmount(() => {
 
 function handleClick(event: MouseEvent) {
   const point = boostActive.value ? 10 : 1
-  timerScore.value += point
-  localStorage.setItem('clickScore', JSON.stringify(score.value))
-  console.log('Клик - Сохранил: ', score.value)
+  scoreStore.add(point)
+  localStorage.setItem('clickScore', JSON.stringify(scoreStore.score))
+  console.log('Клик - Сохранил: ', scoreStore.score)
 
   const { clientX, clientY } = event
   const containerRect = (event.currentTarget as HTMLElement).getBoundingClientRect()
@@ -52,7 +58,7 @@ function handleClick(event: MouseEvent) {
 <template>
   <div class="container">
     <div class="score-display">
-      <p>Очки: {{ timerScore }}</p>
+      <p>Очки: {{ scoreStore.score }}</p>
     </div>
     <div class="circle">
       <button class="button" @click="handleClick">

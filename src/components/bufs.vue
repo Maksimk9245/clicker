@@ -1,8 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { activateBoost } from '@/boostStore'
+import { useScoreStore } from '@/stores'
 
-const score=ref(0)
+const scoreStore = useScoreStore()
+
+onMounted(() => {
+  scoreStore.loadFromLocalStorage()
+})
 
 const showLine = ref(false)
 const showLines=ref(false)
@@ -21,7 +26,7 @@ function clickHandler() {
   isActiveCount.value = false
   activateBoost()
   console.log('Boost power, main btn')
-  score.value += showLine.value ? 10:1
+  scoreStore.increment(showLine.value ? 10:1)
   showLine.value = false
   void showLine.value
   showLine.value = true
@@ -58,9 +63,9 @@ function clickHaandler() {
 function clickBonus(){
   if(bonusActiveCount.value||isActiveCount.value) return;
   bonusActiveCount.value = false
-  score.value+=100
-  localStorage.setItem('bonusScore', JSON.stringify(score.value))
-  console.log('bonus score, activate', score.value)
+  scoreStore.add+=100
+  localStorage.setItem('bonusScore', JSON.stringify(scoreStore.score))
+  console.log('bonus score, activate', scoreStore.score)
 
   setTimeout(() => {
     bonusActiveCount.value = false;
