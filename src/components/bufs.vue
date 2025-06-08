@@ -29,7 +29,6 @@ function clickHandler() {
 
   console.log('Boost power, main btn');
 
-  scoreStore.add(isActiveCount.value ? 10 : 1);
 
   showLine.value = false;
   setTimeout(() => {

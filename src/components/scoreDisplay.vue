@@ -31,7 +31,7 @@ onMounted(() => {
     scoreStore.add(1)
     localStorage.setItem('timerScore', JSON.stringify(scoreStore.score))
     console.log('Timer score', scoreStore.score)
-  }, 10000)
+  }, 100000)
 })
 
 onBeforeUnmount(() => {
@@ -41,13 +41,13 @@ onBeforeUnmount(() => {
 })
 
 function handleClick(event: MouseEvent) {
-  const point = boostActive.value ? 10 : 1
-  scoreStore.add(point)
-  localStorage.setItem('clickScore', JSON.stringify(scoreStore.score))
-  console.log('Клик - Сохранил: ', scoreStore.score)
+  const point = boostActive.value ? 10 : 1;
+  scoreStore.add(point);
+  localStorage.setItem('clickScore', JSON.stringify(scoreStore.score));
+  console.log('Клик - Сохранил: ', scoreStore.score);
 
-  const { clientX, clientY } = event
-  const containerRect = (event.currentTarget as HTMLElement).getBoundingClientRect()
+  const { clientX, clientY } = event;
+  const containerRect = (event.currentTarget as HTMLElement).getBoundingClientRect();
 
   const id = Date.now()
   showPlusList.value.push({
